@@ -43,6 +43,7 @@ namespace MultiThreadResizer
             MaxImagesCountinOneThread = maxImagesCountinOneThread> DefaultImagesCountinOneThread ? maxImagesCountinOneThread: DefaultImagesCountinOneThread;
             ListOfResizeSettings = listOfResizeSettings!=null? listOfResizeSettings : ListOfResizeSettingsDefault;
             ListOfFileAndCustomResizeSettings = new ConcurrentDictionary<FileAndCustomResizeSetting, int>();
+            Log = new List<String>();
         }
         #endregion
 
@@ -68,6 +69,7 @@ namespace MultiThreadResizer
         public string ShortStateSummary
         { get { return String.Format("{0}-{1}-{2}-{3}-{4}-{5}", AllImages, AllResizingImages, FreeImages, ImagesInProccess, ResizedImages, ResizedWithErrorsImages); } }
 
+        public List<String> Log { get; set; }
         #endregion
 
 
@@ -80,7 +82,11 @@ namespace MultiThreadResizer
             var tasks = new Task<string>[MaxTaskCount];
             for (int i = 0; i < MaxTaskCount; i++)
             {
-                tasks[i] = new Task<string>(TaskResizing, token);
+                var portion = TakeImagesForThread();
+                tasks[i] = new Task<string>(()=>ResizeImages(portion), token);
+            }
+            for (int i = 0; i < MaxTaskCount; i++)
+            {
                 tasks[i].Start();
             }
 
@@ -95,10 +101,6 @@ namespace MultiThreadResizer
 
             return result;
         }
-        public string TaskResizing()
-        {
-            return ResizeImages(TakeImagesForThread());
-        }
         public List<FileAndCustomResizeSetting> TakeImagesForThread()
         {
             var result = new List<FileAndCustomResizeSetting>();
@@ -111,13 +113,14 @@ namespace MultiThreadResizer
             int result;
             try
             {
-                ImageJob i = new ImageJob(image.FileSource, image.NewFileName, image.CustomResizeSetting, false, true);
+                ImageJob i = new ImageJob(image.FileSource, image.NewFileName, image.CustomResizeSetting, false, false);
                 i.CreateParentDirectory = true;//Auto-create the uploads directory.
                 i.Build();
                 result = ListOfFileAndCustomResizeSettings.TryUpdate(image, 3, 2)?3:0;
             }
-            catch
+            catch(Exception ex)
             {
+                Log.Add(ex.Message + ex.StackTrace);
                 ListOfFileAndCustomResizeSettings.TryUpdate(image, 0, 2);
                 result = 0;
             }

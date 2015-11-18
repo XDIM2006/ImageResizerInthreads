@@ -107,7 +107,7 @@ namespace UnitTestMultiThreadResizer
         public void StartResizing()
         {
             int CountOfImage = 10;
-            int CountOfThreads = 1;
+            int CountOfThreads = 5;
             var MultiThreadResizer = new MultiThreadResizerWorker(CountOfThreads, CountOfImage);
             MultiThreadResizer.NameSubFolderForNewFiles = @"\NewImages\StartResizing";
             Assert.AreEqual(String.Format("{0}-{1}-{2}-{3}-{4}-{5}", 0, 0, 0, 0, 0,0), MultiThreadResizer.ShortStateSummary);
@@ -116,7 +116,7 @@ namespace UnitTestMultiThreadResizer
             Assert.AreEqual(
                 String.Format("{0}-{1}-{2}-{3}-{4}-{5}",
                 CountFiles, CountFiles * 5, CountFiles * 5 - CountOfImage* CountOfThreads, 0, CountOfImage * CountOfThreads, 0), 
-                MultiThreadResizer.StartResizing(2));
+                MultiThreadResizer.StartResizing(3));
         }
         [TestMethod]
         public void TaskResizing()
