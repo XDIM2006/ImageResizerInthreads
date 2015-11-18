@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ImageResizer;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MultiThreadResizer
 {
@@ -43,7 +44,6 @@ namespace MultiThreadResizer
             MaxImagesCountinOneThread = maxImagesCountinOneThread> DefaultImagesCountinOneThread ? maxImagesCountinOneThread: DefaultImagesCountinOneThread;
             ListOfResizeSettings = listOfResizeSettings!=null? listOfResizeSettings : ListOfResizeSettingsDefault;
             ListOfFileAndCustomResizeSettings = new ConcurrentDictionary<FileAndCustomResizeSetting, int>();
-            Log = new List<String>();
         }
         #endregion
 
@@ -64,42 +64,39 @@ namespace MultiThreadResizer
         { get { return ListOfFileAndCustomResizeSettings.Where(f => f.Value == 0).Count(); } }
 
         public string StateSummary
-        { get { return String.Format("AllImages:{0} AllResizingImages:{1} ResizedImages:{2} ImagesInProccess:{3} FreeImages:{4} ResizedWithErrorsImages:{5}", AllImages, AllResizingImages, FreeImages, ImagesInProccess, ResizedImages, ResizedWithErrorsImages); } }
+        { get { return String.Format("AllImages:{0} AllResizingImages:{1} FreeImages:{2} ImagesInProccess:{3} ResizedImages:{4} ResizedWithErrorsImages:{5}", 
+            AllImages, AllResizingImages, FreeImages, ImagesInProccess, ResizedImages, ResizedWithErrorsImages); } }
 
         public string ShortStateSummary
         { get { return String.Format("{0}-{1}-{2}-{3}-{4}-{5}", AllImages, AllResizingImages, FreeImages, ImagesInProccess, ResizedImages, ResizedWithErrorsImages); } }
 
-        public List<String> Log { get; set; }
         #endregion
-
-
-        public string StartResizing(int timeOutInSec) {
-
-            string result = "";
-
+        
+        public string StartResizing(int timeOutInSec)
+        {
+            var Task = StartResizingTask(timeOutInSec);
+            Task.Wait();
+            return "OK";
+        }
+        public Task StartResizingTask(long timeOutInSec)
+        {
             CancellationTokenSource source = new CancellationTokenSource();
             CancellationToken token = source.Token;
-            var tasks = new Task<string>[MaxTaskCount];
-            for (int i = 0; i < MaxTaskCount; i++)
-            {
-                var portion = TakeImagesForThread();
-                tasks[i] = new Task<string>(()=>ResizeImages(portion), token);
-            }
-            for (int i = 0; i < MaxTaskCount; i++)
-            {
-                tasks[i].Start();
-            }
-
-            Task.WaitAll(tasks, timeOutInSec * 1000, token);
-
-            for (int i = 0; i < MaxTaskCount; i++)
-            {
-                if (tasks[i].IsCompleted) result += i.ToString() + " " + tasks[i].Result + " ";
-                if (tasks[i].IsFaulted) result += i.ToString() + " IsFaulted ";
-                if (tasks[i].IsCanceled) result += i.ToString() + " IsCanceled ";
-            }
-
-            return result;
+            return Task.Factory.StartNew(() =>
+            {                 
+                var watch = new Stopwatch();
+                watch.Start();
+                while (watch.ElapsedMilliseconds< timeOutInSec * 1000 && FreeImages > 0)
+                {
+                    var tasks = new Task[MaxTaskCount];
+                    for (int i = 0; i < MaxTaskCount; i++)
+                    {
+                        var portion = TakeImagesForThread();
+                        tasks[i] = Task.Factory.StartNew(() => ResizeImages(portion), token);
+                    }
+                    Task.WaitAll(tasks, (int)(timeOutInSec * 1000 - watch.ElapsedMilliseconds), token);
+                }
+            }).ContinueWith((t)=> ChangeFlagToFree());
         }
         public List<FileAndCustomResizeSetting> TakeImagesForThread()
         {
@@ -107,6 +104,14 @@ namespace MultiThreadResizer
             result = ListOfFileAndCustomResizeSettings.Where(f => f.Value == 1).Take(MaxImagesCountinOneThread).Select(f => f.Key).ToList();
             result.ForEach(f=> ListOfFileAndCustomResizeSettings.TryUpdate(f,2,1));
             return result;
+        }
+        public void ChangeFlagToFree()
+        {
+            ListOfFileAndCustomResizeSettings.Where(f=>f.Value==2).Select(f=>f.Key).ToList().ForEach(f => ListOfFileAndCustomResizeSettings.TryUpdate(f, 1, 2));
+        }
+        public void ChangeFlagToFree(List<FileAndCustomResizeSetting> images)
+        {
+            images.ForEach(f => ListOfFileAndCustomResizeSettings.TryUpdate(f, 1, 2));
         }
         public int ResizeImage(FileAndCustomResizeSetting image)
         {
@@ -118,9 +123,8 @@ namespace MultiThreadResizer
                 i.Build();
                 result = ListOfFileAndCustomResizeSettings.TryUpdate(image, 3, 2)?3:0;
             }
-            catch(Exception ex)
+            catch
             {
-                Log.Add(ex.Message + ex.StackTrace);
                 ListOfFileAndCustomResizeSettings.TryUpdate(image, 0, 2);
                 result = 0;
             }

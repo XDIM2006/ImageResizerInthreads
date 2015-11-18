@@ -8,6 +8,5 @@ D:\mentoring\ImageResizerInthreads\MultiThreadResizer\bin\Debug\MultiThreadResiz
 D:\mentoring\ImageResizerInthreads\MultiThreadResizer\bin\Debug\MultiThreadResizer.pdb
 D:\mentoring\ImageResizerInthreads\MultiThreadResizer\bin\Debug\ImageResizer.dll
 D:\mentoring\ImageResizerInthreads\MultiThreadResizer\bin\Debug\ImageResizer.xml
-D:\mentoring\ImageResizerInthreads\MultiThreadResizer\obj\Debug\MultiThreadResizer.csprojResolveAssemblyReference.cache
 D:\mentoring\ImageResizerInthreads\MultiThreadResizer\obj\Debug\MultiThreadResizer.dll
 D:\mentoring\ImageResizerInthreads\MultiThreadResizer\obj\Debug\MultiThreadResizer.pdb
