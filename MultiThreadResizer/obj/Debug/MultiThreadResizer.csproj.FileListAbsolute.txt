@@ -1,0 +1,6 @@
+D:\mentoring\MultiThreadResizer\MultiThreadResizer\bin\Debug\MultiThreadResizer.dll
+D:\mentoring\MultiThreadResizer\MultiThreadResizer\bin\Debug\MultiThreadResizer.pdb
+D:\mentoring\MultiThreadResizer\MultiThreadResizer\obj\Debug\MultiThreadResizer.dll
+D:\mentoring\MultiThreadResizer\MultiThreadResizer\obj\Debug\MultiThreadResizer.pdb
+D:\mentoring\MultiThreadResizer\MultiThreadResizer\bin\Debug\ImageResizer.dll
+D:\mentoring\MultiThreadResizer\MultiThreadResizer\bin\Debug\ImageResizer.xml

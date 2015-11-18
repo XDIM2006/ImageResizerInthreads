@@ -1,0 +1,10 @@
+D:\mentoring\MultiThreadResizer\UnitTestMultiThreadResizer\bin\Debug\UnitTestMultiThreadResizer.dll
+D:\mentoring\MultiThreadResizer\UnitTestMultiThreadResizer\bin\Debug\UnitTestMultiThreadResizer.pdb
+D:\mentoring\MultiThreadResizer\UnitTestMultiThreadResizer\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+D:\mentoring\MultiThreadResizer\UnitTestMultiThreadResizer\obj\Debug\UnitTestMultiThreadResizer.csprojResolveAssemblyReference.cache
+D:\mentoring\MultiThreadResizer\UnitTestMultiThreadResizer\obj\Debug\UnitTestMultiThreadResizer.dll
+D:\mentoring\MultiThreadResizer\UnitTestMultiThreadResizer\obj\Debug\UnitTestMultiThreadResizer.pdb
+D:\mentoring\MultiThreadResizer\UnitTestMultiThreadResizer\bin\Debug\ImageResizer.dll
+D:\mentoring\MultiThreadResizer\UnitTestMultiThreadResizer\bin\Debug\ImageResizer.xml
+D:\mentoring\MultiThreadResizer\UnitTestMultiThreadResizer\bin\Debug\MultiThreadResizer.dll
+D:\mentoring\MultiThreadResizer\UnitTestMultiThreadResizer\bin\Debug\MultiThreadResizer.pdb
