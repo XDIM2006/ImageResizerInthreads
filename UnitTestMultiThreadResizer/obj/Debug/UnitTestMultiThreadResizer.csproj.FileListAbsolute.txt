@@ -18,3 +18,14 @@ D:\mentoring\ImageResizerInthreads\UnitTestMultiThreadResizer\bin\Debug\ImageRes
 D:\mentoring\ImageResizerInthreads\UnitTestMultiThreadResizer\obj\Debug\UnitTestMultiThreadResizer.csprojResolveAssemblyReference.cache
 D:\mentoring\ImageResizerInthreads\UnitTestMultiThreadResizer\obj\Debug\UnitTestMultiThreadResizer.dll
 D:\mentoring\ImageResizerInthreads\UnitTestMultiThreadResizer\obj\Debug\UnitTestMultiThreadResizer.pdb
+C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\obj\Debug\UnitTestMultiThreadResizer.csprojResolveAssemblyReference.cache
+C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\bin\Debug\UnitTestMultiThreadResizer.dll
+C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\bin\Debug\UnitTestMultiThreadResizer.pdb
+C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\bin\Debug\ImageResizer.dll
+C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\bin\Debug\MultiThreadResizer.dll
+C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\bin\Debug\MultiThreadResizer.pdb
+C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\bin\Debug\ImageResizer.xml
+C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\bin\Debug\ru\Microsoft.VisualStudio.QualityTools.UnitTestFramework.resources.dll
+C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\obj\Debug\UnitTestMultiThreadResizer.dll
+C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\obj\Debug\UnitTestMultiThreadResizer.pdb
