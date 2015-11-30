@@ -14,22 +14,22 @@ namespace MultiThreadResizer
     public class MultiThreadResizerWorker
     {
         #region Properties
-
         public readonly List<CustomResizeSettings> ListOfResizeSettingsDefault = 
             new List<CustomResizeSettings>()
             {
-                new CustomResizeSettings("_nano", 10, 10),
-                new CustomResizeSettings("_micro", 50, 50),
-                new CustomResizeSettings("_small", 200, 200),
-                new CustomResizeSettings("_medium", 400, 400),
-                new CustomResizeSettings("_large", 1200, 1200)
+                new CustomResizeSettings("_305x235", 305, 235),
+                new CustomResizeSettings("_85x85", 85, 85),
+                new CustomResizeSettings("_240x350", 240, 350),
+                new CustomResizeSettings("_355x170", 355, 170),
+                new CustomResizeSettings("_720x325", 720, 325),
+                new CustomResizeSettings("_240x275", 240, 275)
             };        
         private const int DefaultTaskCount = 1;
         private const int DefaultImagesCountinOneThread = 10;
         public string NameSubFolderForNewFiles { get; set; }
         public int MaxTaskCount { get; set; }
         public int MaxImagesCountinOneThread { get; set; }
-        private List<CustomResizeSettings> ListOfResizeSettings { get; set; }
+        public List<CustomResizeSettings> ListOfResizeSettings { get; set; }
         // TValue = int
         // 0 - error
         // 1 - free
@@ -46,32 +46,32 @@ namespace MultiThreadResizer
             ListOfFileAndCustomResizeSettings = new ConcurrentDictionary<FileAndCustomResizeSetting, int>();
         }
         #endregion
-
         #region InfoProperties
         public int AllImages
         { get { return  ListOfFileAndCustomResizeSettings.Select(f=>f.Key.FileSource).Distinct().Count();} }
         public int AllResizingImages
         { get { return ListOfFileAndCustomResizeSettings.Count(); } }
-
         public int ResizedImages
         { get { return ListOfFileAndCustomResizeSettings.Where(f => f.Value==3).Count(); } }
-
         public int ImagesInProccess
         { get { return ListOfFileAndCustomResizeSettings.Where(f => f.Value == 2).Count(); } }
         public int FreeImages
         { get { return ListOfFileAndCustomResizeSettings.Where(f => f.Value == 1).Count(); } }
         public int ResizedWithErrorsImages
         { get { return ListOfFileAndCustomResizeSettings.Where(f => f.Value == 0).Count(); } }
-
         public string StateSummary
         { get { return String.Format("AllImages:{0} AllResizingImages:{1} FreeImages:{2} ImagesInProccess:{3} ResizedImages:{4} ResizedWithErrorsImages:{5}", 
             AllImages, AllResizingImages, FreeImages, ImagesInProccess, ResizedImages, ResizedWithErrorsImages); } }
-
         public string ShortStateSummary
         { get { return String.Format("{0}-{1}-{2}-{3}-{4}-{5}", AllImages, AllResizingImages, FreeImages, ImagesInProccess, ResizedImages, ResizedWithErrorsImages); } }
-
+        private ConcurrentQueue<string> Log { get; set; }
+        public string GetLogMessage()
+        {
+            string result;
+            Log.TryDequeue(out result);
+            return result;
+        }
         #endregion
-        
         public string StartResizing(int timeOutInSec)
         {
             var Task = StartResizingTask(timeOutInSec);
@@ -97,6 +97,26 @@ namespace MultiThreadResizer
                     Task.WaitAll(tasks, (int)(timeOutInSec * 1000 - watch.ElapsedMilliseconds), token);
                 }
             }).ContinueWith((t)=> ChangeFlagToFree());
+        }
+        public async Task StartResizingAsync(long timeOutInSec)
+        {
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+            return Task.Factory.StartNew(() =>
+            {
+                var watch = new Stopwatch();
+                watch.Start();
+                while (watch.ElapsedMilliseconds < timeOutInSec * 1000 && FreeImages > 0)
+                {
+                    var tasks = new Task[MaxTaskCount];
+                    for (int i = 0; i < MaxTaskCount; i++)
+                    {
+                        var portion = TakeImagesForThread();
+                        tasks[i] = Task.Factory.StartNew(() => ResizeImages(portion), token);
+                    }
+                    Task.WaitAll(tasks, (int)(timeOutInSec * 1000 - watch.ElapsedMilliseconds), token);
+                }
+            });
         }
         public List<FileAndCustomResizeSetting> TakeImagesForThread()
         {
@@ -130,10 +150,10 @@ namespace MultiThreadResizer
             }
             return result;
         }
-        public string ResizeImages(List<FileAndCustomResizeSetting> images)
+        public void ResizeImages(List<FileAndCustomResizeSetting> images)
         {
             var result = images.Select(f => ResizeImage(f)).ToList();
-            return string.Concat("Sized =", result.Count," Successfully =", result.Where(r=>r==3).Count(), " with errors=", result.Where(r => r == 0).Count());
+            Log.Enqueue(string.Concat("Sized =", result.Count, " Successfully =", result.Where(r => r == 3).Count(), " with errors=", result.Where(r => r == 0).Count()));
         }
         public string SetFolderWithImages(string path)
         {
@@ -192,7 +212,7 @@ namespace MultiThreadResizer
     public class CustomResizeSettings : Instructions
     {
         public string Suffix { get ; set; }
-        public CustomResizeSettings(string suffix, int width, int height, FitMode mode = FitMode.None, string imageFormat = null)
+        public CustomResizeSettings(string suffix, int width, int height, FitMode mode = FitMode.Stretch, string imageFormat = null)
         {
             Suffix = suffix;
             Height = height;
@@ -200,6 +220,5 @@ namespace MultiThreadResizer
             Mode = mode;
             Format = imageFormat;
         }
-
     }
 }

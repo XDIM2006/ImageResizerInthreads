@@ -11,9 +11,10 @@ namespace UnitTestMultiThreadResizer
     [TestClass]
     public class UnitTestMultiThreadResizer
     {
-        string Path = @"D:\mentoring\img";
-        string Path2 = @"D:\mentoring\img2";
-        int CountFiles = 45;
+        string Path = @"D:\Sephora\2016.1\images";
+        int CountFiles = 5;
+        int CountOfImage = 10;
+        int CountOfThreads = 1;
         [TestMethod]
         public void TestFileAndCustomResizeSettingClass()
         {
@@ -74,38 +75,50 @@ namespace UnitTestMultiThreadResizer
         [TestMethod]
         public void TakeImagesForThread()
         {
-            var MultiThreadResizer = new MultiThreadResizerWorker(2,20);
+            var MultiThreadResizer = new MultiThreadResizerWorker(CountOfThreads, CountOfImage);
             MultiThreadResizer.SetFolderWithImages(Path);
 
             var result = MultiThreadResizer.TakeImagesForThread();
 
-            Assert.AreEqual(20, result.Count);
-            Assert.AreEqual(20, result.Where(f=> MultiThreadResizer.ListOfFileAndCustomResizeSettings[f]==2).Count());
+            Assert.AreEqual(CountOfImage, result.Count);
+            Assert.AreEqual(CountOfImage,
+                result.Where(f=> MultiThreadResizer.ListOfFileAndCustomResizeSettings[f]==2).Count());
             result = MultiThreadResizer.TakeImagesForThread();
 
-            Assert.AreEqual(20, result.Count);
-            Assert.AreEqual(20, result.Where(f => MultiThreadResizer.ListOfFileAndCustomResizeSettings[f] == 2).Count());
+            Assert.AreEqual(CountOfImage, result.Count);
+            Assert.AreEqual(CountOfImage, 
+                result.Where(f => MultiThreadResizer.ListOfFileAndCustomResizeSettings[f] == 2).Count());
         }
         [TestMethod]
         public void ChangeFlagToFree()
         {
-            int CountOfImage = 50;
-            int CountOfThreads = 1;
             var MultiThreadResizer = new MultiThreadResizerWorker(CountOfThreads, CountOfImage);
-            Assert.AreEqual(String.Format("{0}-{1}-{2}-{3}-{4}-{5}", 0, 0, 0, 0, 0, 0), MultiThreadResizer.ShortStateSummary);
+            Assert.AreEqual(GetFakeShortSummary(0, 0, 0, 0, 0, 0), MultiThreadResizer.ShortStateSummary);
             MultiThreadResizer.SetFolderWithImages(Path);
-            Assert.AreEqual(String.Format("{0}-{1}-{2}-{3}-{4}-{5}", CountFiles, CountFiles * 5, CountFiles * 5, 0, 0, 0), MultiThreadResizer.ShortStateSummary);
+
+            Assert.AreEqual(GetFakeShortSummary(CountFiles, 
+                CountFiles * MultiThreadResizer.ListOfResizeSettings.Count, 
+                CountFiles * MultiThreadResizer.ListOfResizeSettings.Count,
+                0, 0, 0), MultiThreadResizer.ShortStateSummary);
             var result = MultiThreadResizer.TakeImagesForThread();
-            Assert.AreEqual(String.Format("{0}-{1}-{2}-{3}-{4}-{5}", CountFiles, CountFiles * 5, CountFiles * 5 - CountOfThreads* CountOfImage, CountOfThreads * CountOfImage, 0, 0), MultiThreadResizer.ShortStateSummary);
+
+            Assert.AreEqual(GetFakeShortSummary(CountFiles, 
+                CountFiles * MultiThreadResizer.ListOfResizeSettings.Count, 
+                CountFiles * MultiThreadResizer.ListOfResizeSettings.Count - CountOfThreads * CountOfImage, 
+                CountOfThreads * CountOfImage, 0, 0), MultiThreadResizer.ShortStateSummary);
+
             MultiThreadResizer.ChangeFlagToFree(result);
-            Assert.AreEqual(String.Format("{0}-{1}-{2}-{3}-{4}-{5}", CountFiles, CountFiles * 5, CountFiles * 5, 0, 0, 0), MultiThreadResizer.ShortStateSummary);
+
+            Assert.AreEqual(GetFakeShortSummary(CountFiles, 
+                CountFiles * MultiThreadResizer.ListOfResizeSettings.Count, 
+                CountFiles * MultiThreadResizer.ListOfResizeSettings.Count, 
+                0, 0, 0), MultiThreadResizer.ShortStateSummary);
         }
 
         [TestMethod]
         public void ResizeImages()
         {
-            int CountOfImage = 10;
-            var MultiThreadResizer = new MultiThreadResizerWorker(2, CountOfImage);
+            var MultiThreadResizer = new MultiThreadResizerWorker(CountOfThreads, CountOfImage);
             MultiThreadResizer.NameSubFolderForNewFiles = @"\NewImages\ResizeImages";
             MultiThreadResizer.SetFolderWithImages(Path);
             var images = MultiThreadResizer.TakeImagesForThread();
@@ -123,19 +136,13 @@ namespace UnitTestMultiThreadResizer
         [TestMethod]
         public void StartResizing()
         {
-            int CountOfImage = 10;
-            int CountOfThreads = 10;
             var MultiThreadResizer = new MultiThreadResizerWorker(CountOfThreads, CountOfImage);
             MultiThreadResizer.NameSubFolderForNewFiles = @"\NewImages\StartResizing";
-            Assert.AreEqual(String.Format("{0}-{1}-{2}-{3}-{4}-{5}", 0, 0, 0, 0, 0,0), MultiThreadResizer.ShortStateSummary);
+            Assert.AreEqual(GetFakeShortSummary(0, 0, 0, 0, 0,0), MultiThreadResizer.ShortStateSummary);
             MultiThreadResizer.SetFolderWithImages(Path);
-            Assert.AreEqual(String.Format("{0}-{1}-{2}-{3}-{4}-{5}", CountFiles, CountFiles * 5, CountFiles * 5, 0, 0, 0), MultiThreadResizer.ShortStateSummary);
-
+            Assert.AreEqual(GetFakeShortSummary(CountFiles, CountFiles * MultiThreadResizer.ListOfResizeSettings.Count, CountFiles * MultiThreadResizer.ListOfResizeSettings.Count, 0, 0, 0), MultiThreadResizer.ShortStateSummary);
             var result = MultiThreadResizer.ShortStateSummary;
-            var task = MultiThreadResizer.StartResizingTask(35);
-            result += MultiThreadResizer.ShortStateSummary;
-            MultiThreadResizer.SetFolderWithImages(Path2);
-            //result += MultiThreadResizer.ShortStateSummary;
+            var task = MultiThreadResizer.StartResizingTask(60);
             task.Wait();
             Assert.AreEqual(MultiThreadResizer.ShortStateSummary, result);
         }
@@ -146,11 +153,13 @@ namespace UnitTestMultiThreadResizer
             int CountOfImage = 10;
             var MultiThreadResizer = new MultiThreadResizerWorker(2, CountOfImage);
             MultiThreadResizer.NameSubFolderForNewFiles = @"\NewImages\StateSummary";
-            Assert.AreEqual(String.Format("{0}-{1}-{2}-{3}-{4}-{5}", 0, 0, 0, 0, 0, 0),MultiThreadResizer.ShortStateSummary);
-
+            Assert.AreEqual(GetFakeShortSummary(0, 0, 0, 0, 0, 0),MultiThreadResizer.ShortStateSummary);
             MultiThreadResizer.SetFolderWithImages(Path);
-
-            Assert.AreEqual(String.Format("{0}-{1}-{2}-{3}-{4}-{5}", CountFiles, CountFiles *5, CountFiles * 5, 0, 0, 0),MultiThreadResizer.ShortStateSummary);
+            Assert.AreEqual(GetFakeShortSummary(CountFiles, CountFiles * MultiThreadResizer.ListOfResizeSettings.Count, CountFiles * MultiThreadResizer.ListOfResizeSettings.Count, 0, 0, 0),MultiThreadResizer.ShortStateSummary);
+        }
+        private string GetFakeShortSummary(int AllImages, int AllResizingImages, int FreeImages, int ImagesInProccess, int ResizedImages, int ResizedWithErrorsImages)
+        {
+            return String.Format("{0}-{1}-{2}-{3}-{4}-{5}", AllImages, AllResizingImages, FreeImages, ImagesInProccess, ResizedImages, ResizedWithErrorsImages);
         }
     }
 }
