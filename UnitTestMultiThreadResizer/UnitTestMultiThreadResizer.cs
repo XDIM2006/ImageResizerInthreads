@@ -122,7 +122,7 @@ namespace UnitTestMultiThreadResizer
             MultiThreadResizer.NameSubFolderForNewFiles = @"\NewImages\ResizeImages";
             MultiThreadResizer.SetFolderWithImages(Path);
             var images = MultiThreadResizer.TakeImagesForThread();
-            var result = MultiThreadResizer.ResizeImages(images);
+            MultiThreadResizer.ResizeImages(images);
             Assert.AreEqual(string.Concat("Sized =", images.Count, " Successfully =", images.Count, " with errors=", 0), result);
             Assert.AreEqual(images.Count, images.Where(f => MultiThreadResizer.ListOfFileAndCustomResizeSettings[f] == 3).Count());
 

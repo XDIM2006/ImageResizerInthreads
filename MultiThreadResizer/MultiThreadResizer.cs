@@ -98,26 +98,6 @@ namespace MultiThreadResizer
                 }
             }).ContinueWith((t)=> ChangeFlagToFree());
         }
-        public async Task StartResizingAsync(long timeOutInSec)
-        {
-            CancellationTokenSource source = new CancellationTokenSource();
-            CancellationToken token = source.Token;
-            return Task.Factory.StartNew(() =>
-            {
-                var watch = new Stopwatch();
-                watch.Start();
-                while (watch.ElapsedMilliseconds < timeOutInSec * 1000 && FreeImages > 0)
-                {
-                    var tasks = new Task[MaxTaskCount];
-                    for (int i = 0; i < MaxTaskCount; i++)
-                    {
-                        var portion = TakeImagesForThread();
-                        tasks[i] = Task.Factory.StartNew(() => ResizeImages(portion), token);
-                    }
-                    Task.WaitAll(tasks, (int)(timeOutInSec * 1000 - watch.ElapsedMilliseconds), token);
-                }
-            });
-        }
         public List<FileAndCustomResizeSetting> TakeImagesForThread()
         {
             var result = new List<FileAndCustomResizeSetting>();

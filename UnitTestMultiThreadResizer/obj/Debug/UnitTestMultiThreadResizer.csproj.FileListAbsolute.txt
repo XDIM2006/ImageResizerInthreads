@@ -29,3 +29,4 @@ C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThre
 C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\bin\Debug\ru\Microsoft.VisualStudio.QualityTools.UnitTestFramework.resources.dll
 C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\obj\Debug\UnitTestMultiThreadResizer.dll
 C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\obj\Debug\UnitTestMultiThreadResizer.pdb
+C:\Users\Dmitriy_Sharnin@epam.com\Documents\GitHub\ImageResizerInthreads\UnitTestMultiThreadResizer\obj\Debug\UnitTestMultiThreadResizer.csprojResolveAssemblyReference.cache

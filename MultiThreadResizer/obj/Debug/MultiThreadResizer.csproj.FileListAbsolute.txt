@@ -17,3 +17,4 @@ C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\MultiThreadResize
 C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\MultiThreadResizer\bin\Debug\ImageResizer.xml
 C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\MultiThreadResizer\obj\Debug\MultiThreadResizer.dll
 C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\MultiThreadResizer\obj\Debug\MultiThreadResizer.pdb
+C:\Users\Dmitriy_Sharnin@epam.com\Documents\GitHub\ImageResizerInthreads\MultiThreadResizer\obj\Debug\MultiThreadResizer.csprojResolveAssemblyReference.cache
