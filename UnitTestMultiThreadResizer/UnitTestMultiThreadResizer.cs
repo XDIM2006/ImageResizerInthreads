@@ -123,12 +123,12 @@ namespace UnitTestMultiThreadResizer
             MultiThreadResizer.SetFolderWithImages(Path);
             var images = MultiThreadResizer.TakeImagesForThread();
             MultiThreadResizer.ResizeImages(images);
-            Assert.AreEqual(string.Concat("Sized =", images.Count, " Successfully =", images.Count, " with errors=", 0), result);
+            Assert.AreEqual(string.Concat("Sized =", images.Count, " Successfully =", images.Count, " with errors=", 0), MultiThreadResizer.GetLogMessage());
             Assert.AreEqual(images.Count, images.Where(f => MultiThreadResizer.ListOfFileAndCustomResizeSettings[f] == 3).Count());
 
             var images2 = MultiThreadResizer.TakeImagesForThread();
-            var result2 = MultiThreadResizer.ResizeImages(images2);
-            Assert.AreEqual(string.Concat("Sized =", images2.Count, " Successfully =", images2.Count, " with errors=", 0), result2);
+            MultiThreadResizer.ResizeImages(images2);
+            Assert.AreEqual(string.Concat("Sized =", images2.Count, " Successfully =", images2.Count, " with errors=", 0), MultiThreadResizer.GetLogMessage());
             Assert.AreEqual(images2.Count, images2.Where(f => MultiThreadResizer.ListOfFileAndCustomResizeSettings[f] == 3).Count());
             Assert.AreEqual(CountOfImage*2, MultiThreadResizer.ListOfFileAndCustomResizeSettings.Where(f => f.Value == 3).Count());
         }
@@ -144,7 +144,7 @@ namespace UnitTestMultiThreadResizer
             var result = MultiThreadResizer.ShortStateSummary;
             var task = MultiThreadResizer.StartResizingTask(60);
             task.Wait();
-            Assert.AreEqual(MultiThreadResizer.ShortStateSummary, result);
+            Assert.AreEqual(MultiThreadResizer.ShortStateSummary, GetFakeShortSummary(5, 30, 0, 0, 30, 0));
         }
         
         [TestMethod]
@@ -160,6 +160,26 @@ namespace UnitTestMultiThreadResizer
         private string GetFakeShortSummary(int AllImages, int AllResizingImages, int FreeImages, int ImagesInProccess, int ResizedImages, int ResizedWithErrorsImages)
         {
             return String.Format("{0}-{1}-{2}-{3}-{4}-{5}", AllImages, AllResizingImages, FreeImages, ImagesInProccess, ResizedImages, ResizedWithErrorsImages);
+        }
+
+        [TestMethod]
+        public void StartResizingByFiles()
+        {
+            var MultiThreadResizer = new MultiThreadResizerWorker(CountOfThreads, CountOfImage);
+
+            MultiThreadResizer.NameSubFolderForNewFiles = @"\NewImages";
+            Assert.AreEqual(GetFakeShortSummary(0, 0,0, 0, 0, 0), MultiThreadResizer.ShortStateSummary);
+            MultiThreadResizer.ListOfResizeSettings.Add(new CustomResizeSettings("_2", 200, 300));
+            var addedImagesResult = MultiThreadResizer.AddListOfImages(new List<string>() { @"D:\Sephora\2016.1\images\black.png", @"D:\Sephora\2016.1\images\brown.png" });
+            Assert.AreEqual(GetFakeShortSummary(2,
+                2 * MultiThreadResizer.ListOfResizeSettings.Count, 
+                2 * MultiThreadResizer.ListOfResizeSettings.Count,
+                0, 0, 0), 
+                MultiThreadResizer.ShortStateSummary);
+            var result = MultiThreadResizer.ShortStateSummary;
+            var task = MultiThreadResizer.StartResizingTask(60);
+            task.Wait();
+            Assert.AreEqual(MultiThreadResizer.ShortStateSummary, GetFakeShortSummary(2, 12, 0, 0, 12, 0));
         }
     }
 }

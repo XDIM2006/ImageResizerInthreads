@@ -17,12 +17,7 @@ namespace MultiThreadResizer
         public readonly List<CustomResizeSettings> ListOfResizeSettingsDefault = 
             new List<CustomResizeSettings>()
             {
-                new CustomResizeSettings("_305x235", 305, 235),
-                new CustomResizeSettings("_85x85", 85, 85),
-                new CustomResizeSettings("_240x350", 240, 350),
-                new CustomResizeSettings("_355x170", 355, 170),
-                new CustomResizeSettings("_720x325", 720, 325),
-                new CustomResizeSettings("_240x275", 240, 275)
+                new CustomResizeSettings("_thumb", 20, 20)
             };        
         private const int DefaultTaskCount = 1;
         private const int DefaultImagesCountinOneThread = 10;
@@ -44,6 +39,7 @@ namespace MultiThreadResizer
             MaxImagesCountinOneThread = maxImagesCountinOneThread> DefaultImagesCountinOneThread ? maxImagesCountinOneThread: DefaultImagesCountinOneThread;
             ListOfResizeSettings = listOfResizeSettings!=null? listOfResizeSettings : ListOfResizeSettingsDefault;
             ListOfFileAndCustomResizeSettings = new ConcurrentDictionary<FileAndCustomResizeSetting, int>();
+            Log = new ConcurrentQueue<string>();
         }
         #endregion
         #region InfoProperties
@@ -132,7 +128,7 @@ namespace MultiThreadResizer
         }
         public void ResizeImages(List<FileAndCustomResizeSetting> images)
         {
-            var result = images.Select(f => ResizeImage(f)).ToList();
+            var result = images.Select(f => ResizeImage(f)).ToList();            
             Log.Enqueue(string.Concat("Sized =", result.Count, " Successfully =", result.Where(r => r == 3).Count(), " with errors=", result.Where(r => r == 0).Count()));
         }
         public string SetFolderWithImages(string path)
@@ -179,12 +175,14 @@ namespace MultiThreadResizer
     {
         private string _fileName { get; set; }
         public string FileSource { get; set; }
+        public string FileName { get; set; }
         public CustomResizeSettings CustomResizeSetting { get; set; }
-        public string NewFileName { get { return _fileName + CustomResizeSetting.Suffix + Path.GetExtension(FileSource); }}
+        public string NewFileName { get { return _fileName + FileName; } }
         public FileAndCustomResizeSetting(string fileSource, CustomResizeSettings customResizeSetting, string nameSubFolderForNewFiles = "")
         {
             FileSource = fileSource;
-            _fileName = Path.GetDirectoryName(fileSource) + nameSubFolderForNewFiles + "\\" + Path.GetFileNameWithoutExtension(fileSource);
+            FileName = Path.GetFileNameWithoutExtension(fileSource) + customResizeSetting.Suffix + Path.GetExtension(FileSource);
+            _fileName = Path.GetDirectoryName(fileSource) + nameSubFolderForNewFiles + "\\";
             CustomResizeSetting = customResizeSetting;
         }
     }
