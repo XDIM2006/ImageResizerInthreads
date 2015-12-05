@@ -10,7 +10,6 @@ D:\mentoring\ImageResizerInthreads\MultiThreadResizer\bin\Debug\ImageResizer.dll
 D:\mentoring\ImageResizerInthreads\MultiThreadResizer\bin\Debug\ImageResizer.xml
 D:\mentoring\ImageResizerInthreads\MultiThreadResizer\obj\Debug\MultiThreadResizer.dll
 D:\mentoring\ImageResizerInthreads\MultiThreadResizer\obj\Debug\MultiThreadResizer.pdb
-C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\MultiThreadResizer\obj\Debug\MultiThreadResizer.csprojResolveAssemblyReference.cache
 C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\MultiThreadResizer\bin\Debug\MultiThreadResizer.dll
 C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\MultiThreadResizer\bin\Debug\MultiThreadResizer.pdb
 C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\MultiThreadResizer\bin\Debug\ImageResizer.dll
@@ -23,3 +22,4 @@ C:\Users\Dmitriy_Sharnin@epam.com\Documents\GitHub\ImageResizerInthreads\MultiTh
 C:\Users\Dmitriy_Sharnin@epam.com\Documents\GitHub\ImageResizerInthreads\MultiThreadResizer\obj\Debug\MultiThreadResizer.pdb
 C:\Users\Dmitriy_Sharnin@epam.com\Documents\GitHub\ImageResizerInthreads\MultiThreadResizer\bin\Debug\MultiThreadResizer.dll
 C:\Users\Dmitriy_Sharnin@epam.com\Documents\GitHub\ImageResizerInthreads\MultiThreadResizer\bin\Debug\MultiThreadResizer.pdb
+C:\Users\Дмитрий\Documents\GitHub\ImageResizerInthreads\MultiThreadResizer\obj\Debug\MultiThreadResizer.csprojResolveAssemblyReference.cache

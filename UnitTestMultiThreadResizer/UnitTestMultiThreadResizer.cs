@@ -11,9 +11,9 @@ namespace UnitTestMultiThreadResizer
     [TestClass]
     public class UnitTestMultiThreadResizer
     {
-        string Path = @"D:\Sephora\2016.1\images";
-        int CountFiles = 5;
-        int CountOfImage = 10;
+        string Path = @"C:\Users\Дмитрий\Pictures";
+        int CountFiles = 6;
+        int CountOfImage = 6;
         int CountOfThreads = 1;
         [TestMethod]
         public void TestFileAndCustomResizeSettingClass()
@@ -82,12 +82,12 @@ namespace UnitTestMultiThreadResizer
 
             Assert.AreEqual(CountOfImage, result.Count);
             Assert.AreEqual(CountOfImage,
-                result.Where(f=> MultiThreadResizer.ListOfFileAndCustomResizeSettings[f]==2).Count());
+                result.Where(f=> MultiThreadResizer.ListOfFileAndCustomResizeSettings[f].Status==2).Count());
             result = MultiThreadResizer.TakeImagesForThread();
 
-            Assert.AreEqual(CountOfImage, result.Count);
-            Assert.AreEqual(CountOfImage, 
-                result.Where(f => MultiThreadResizer.ListOfFileAndCustomResizeSettings[f] == 2).Count());
+            Assert.AreEqual(0, result.Count);
+            Assert.AreEqual(0, 
+                result.Where(f => MultiThreadResizer.ListOfFileAndCustomResizeSettings[f].Status == 2).Count());
         }
         [TestMethod]
         public void ChangeFlagToFree()
@@ -124,13 +124,13 @@ namespace UnitTestMultiThreadResizer
             var images = MultiThreadResizer.TakeImagesForThread();
             MultiThreadResizer.ResizeImages(images);
             Assert.AreEqual(string.Concat("Sized =", images.Count, " Successfully =", images.Count, " with errors=", 0), MultiThreadResizer.GetLogMessage());
-            Assert.AreEqual(images.Count, images.Where(f => MultiThreadResizer.ListOfFileAndCustomResizeSettings[f] == 3).Count());
+            Assert.AreEqual(images.Count, images.Where(f => MultiThreadResizer.ListOfFileAndCustomResizeSettings[f].Status == 3).Count());
 
             var images2 = MultiThreadResizer.TakeImagesForThread();
             MultiThreadResizer.ResizeImages(images2);
             Assert.AreEqual(string.Concat("Sized =", images2.Count, " Successfully =", images2.Count, " with errors=", 0), MultiThreadResizer.GetLogMessage());
-            Assert.AreEqual(images2.Count, images2.Where(f => MultiThreadResizer.ListOfFileAndCustomResizeSettings[f] == 3).Count());
-            Assert.AreEqual(CountOfImage*2, MultiThreadResizer.ListOfFileAndCustomResizeSettings.Where(f => f.Value == 3).Count());
+            Assert.AreEqual(images2.Count, images2.Where(f => MultiThreadResizer.ListOfFileAndCustomResizeSettings[f].Status == 3).Count());
+            Assert.AreEqual(CountOfImage, MultiThreadResizer.ListOfFileAndCustomResizeSettings.Where(f => f.Value.Status == 3).Count());
         }
 
         [TestMethod]
@@ -144,7 +144,7 @@ namespace UnitTestMultiThreadResizer
             var result = MultiThreadResizer.ShortStateSummary;
             var task = MultiThreadResizer.StartResizingTask(60);
             task.Wait();
-            Assert.AreEqual(MultiThreadResizer.ShortStateSummary, GetFakeShortSummary(5, 30, 0, 0, 30, 0));
+            Assert.AreEqual(MultiThreadResizer.ShortStateSummary, GetFakeShortSummary(6, 6, 0, 0, 6, 0));
         }
         
         [TestMethod]
@@ -170,7 +170,9 @@ namespace UnitTestMultiThreadResizer
             MultiThreadResizer.NameSubFolderForNewFiles = @"\NewImages";
             Assert.AreEqual(GetFakeShortSummary(0, 0,0, 0, 0, 0), MultiThreadResizer.ShortStateSummary);
             MultiThreadResizer.ListOfResizeSettings.Add(new CustomResizeSettings("_2", 200, 300));
-            var addedImagesResult = MultiThreadResizer.AddListOfImages(new List<string>() { @"D:\Sephora\2016.1\images\black.png", @"D:\Sephora\2016.1\images\brown.png" });
+            var addedImagesResult = MultiThreadResizer.AddListOfImages(new List<string>() {
+                @"C:\Users\Дмитрий\Pictures\1.jpg",
+                @"C:\Users\Дмитрий\Pictures\2.png" });
             Assert.AreEqual(GetFakeShortSummary(2,
                 2 * MultiThreadResizer.ListOfResizeSettings.Count, 
                 2 * MultiThreadResizer.ListOfResizeSettings.Count,
@@ -179,7 +181,7 @@ namespace UnitTestMultiThreadResizer
             var result = MultiThreadResizer.ShortStateSummary;
             var task = MultiThreadResizer.StartResizingTask(60);
             task.Wait();
-            Assert.AreEqual(MultiThreadResizer.ShortStateSummary, GetFakeShortSummary(2, 12, 0, 0, 12, 0));
+            Assert.AreEqual(MultiThreadResizer.ShortStateSummary, GetFakeShortSummary(2,4, 0, 0, 4, 0));
         }
     }
 }
